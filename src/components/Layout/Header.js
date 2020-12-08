@@ -4,10 +4,11 @@ import { Row, Col } from 'antd';
 const Header = () => {
     return (
         <Row>
-            <Col span={6}>
+            <Col span={4}>
+                Teste
             </Col>
-            <Col span={18}>
-            
+            <Col span={20}>
+                
             </Col>
         </Row>
     )
