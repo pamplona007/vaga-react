@@ -3,7 +3,7 @@ import { Row, Col } from 'antd';
 
 const Header = () => {
     return (
-        <Row>
+        <Row className="main-header">
             <Col span={4}>
                 Teste
             </Col>

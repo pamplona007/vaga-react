@@ -9,10 +9,10 @@ const Layout = ({ children }) => {
         <>
             <Header />
             <Row>
-                <Col span={4}>
+                <Col span={4} className="main-menu">
                     <Nav />
                 </Col>
-                <Col span={20}>
+                <Col span={20} className="main-content">
                     <Outlet />
                 </Col>
             </Row>

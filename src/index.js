@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import 'antd/dist/antd.css';
+import './index.css';
 
 // Get database using
 // import { db } from '../../util/firebaseUtils'
