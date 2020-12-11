@@ -44,22 +44,22 @@ const Newcar = () => {
     
     const onFinish = values => {
         console.log(values);
-        // files.forEach(file => {
-        //     const storage = firebase.storage();
-        //     const metadata = {
-        //         contentType: 'image/jpeg'
-        //     }
-        //     const storageRef = storage.ref();
-        //     const imageName = Math.floor(Math.random() * 10000000);
-        //     const imgFile = storageRef.child(`images/${imageName}.png`);
-        //     try {
-        //         const image = imgFile.put(file, metadata);
-        //     } catch(e) {
-        //     }
-        // });      
-        // db.collection('cars').add(values)
-        //     .then((response) => console.log(response))
-        //     .catch((error) => console.log(error))
+        files.forEach(file => {
+            const storage = firebase.storage();
+            const metadata = {
+                contentType: 'image/jpeg'
+            }
+            const storageRef = storage.ref();
+            const imageName = Math.floor(Math.random() * 10000000);
+            const imgFile = storageRef.child(`images/${imageName}.png`);
+            try {
+                const image = imgFile.put(file, metadata);
+            } catch(e) {
+            }
+        });      
+        db.collection('cars').add(values)
+            .then((response) => console.log(response))
+            .catch((error) => console.log(error))
     };
     
     const onFinishFailed = errorInfo => {
