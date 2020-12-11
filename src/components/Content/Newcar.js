@@ -1,24 +1,92 @@
-import { Form, Button, Divider, Input, InputNumber } from 'antd'
+import { Form, Button, Divider, Input, Upload, message } from 'antd'
 import React from 'react'
 import { db } from '../../util/firebaseUtils'
+import firebase from 'firebase';
 
 
 const Newcar = () => {
+
+    const [ loading, setLoad ] = React.useState(false);
+    const [ imageUrl, setimageUrl ] = React.useState('');
+    const [ files, setFiles ] = React.useState([]);
+
+    function getBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+            
+    const customUpload = ({ onError, onSuccess, file }) => {
+        const storage = firebase.storage();
+        const metadata = {
+            contentType: 'image/jpeg'
+        }
+        const storageRef = storage.ref();
+        const imageName = Math.floor(Math.random() * 1000);
+        const imgFile = storageRef.child(`images/${imageName}.png`);
+        try {
+            const image = imgFile.put(file, metadata);
+            onSuccess(null, image);
+        } catch(e) {
+            onError(e);
+        }
+    };
+
+    const uploadButton = (
+        <div>
+            <div className="ant-upload-text">Upload</div>
+        </div>
+    );
+
     
     const onFinish = values => {
-        console.log('Salvando dados ' + values);
-        db.collection('cars').add(values)
-            .then((response) => console.log(response))
-            .catch((error) => console.log(error))
+        console.log(values);
+        // files.forEach(file => {
+        //     const storage = firebase.storage();
+        //     const metadata = {
+        //         contentType: 'image/jpeg'
+        //     }
+        //     const storageRef = storage.ref();
+        //     const imageName = Math.floor(Math.random() * 10000000);
+        //     const imgFile = storageRef.child(`images/${imageName}.png`);
+        //     try {
+        //         const image = imgFile.put(file, metadata);
+        //     } catch(e) {
+        //     }
+        // });      
+        // db.collection('cars').add(values)
+        //     .then((response) => console.log(response))
+        //     .catch((error) => console.log(error))
     };
     
     const onFinishFailed = errorInfo => {
         console.log('Failed:', errorInfo);
     };
 
+    let storageRef = firebase.storage().ref();
+    console.log(storageRef);
+
+
     return (
         <>
             <h1>Novo Carro</h1>
+            <Divider />
+            <Upload
+                name="car"
+                listType="picture-card"
+                className="car-uploader"
+                beforeUpload={file => {
+                    setFiles(() => [...files, file]);
+                    return false;            
+                }}
+                // onChange={handleChange}
+                // customRequest={customUpload}
+                >
+                {imageUrl ? <img src={imageUrl} alt="car" /> : uploadButton}
+            </Upload>
             <Divider />
             <Form name="newCarForm" onFinish={onFinish} onFinishFailed={onFinishFailed}>
                 <Form.Item label="Marca" name="brand" rules={[{ required: true }]}>

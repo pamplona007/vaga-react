@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Login from './components/Login';
 import Home from './components/Content/Home'
+import Editcar from './components/Content/Editcar'
 import Newcar from './components/Content/Newcar'
 import Offers from './components/Content/Offers';
 import Singlecar from './components/Content/Singlecar';
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="app/*" element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="novo" element={<Newcar />} />
+          <Route path="editar/:id" element={<Editcar />} />
           <Route path="ofertas">
             <Route path="/" element={<Offers />} />
             <Route path="/:id" element={<Singlecar />} />
