@@ -26,6 +26,7 @@ const Newcar = () => {
         setLoading(true)
         values.images = [];
         values.created = firebase.firestore.FieldValue.serverTimestamp();
+        values.views = 0;
         files.forEach(file => {
             const storageRef = firebase.storage().ref();
             const imageName = `${values.brand}-${values.model}-${uuidv4()}`;
