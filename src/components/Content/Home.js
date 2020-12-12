@@ -1,4 +1,4 @@
-import { Table, Modal, Button, Row, Col, Divider, Space } from 'antd'
+import { Table, Modal, Button, Row, Col, Divider, Space, Spin } from 'antd'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { db } from '../../util/firebaseUtils'
@@ -9,6 +9,7 @@ const Home = () => {
 
     const [cars, setCars] = React.useState(null)
     const [reload, setReload] = React.useState('')
+    const [loading, setLoading] = React.useState(false)
 
     function showDeleteConfirm(id, model) {
         confirm({
@@ -18,18 +19,47 @@ const Home = () => {
             okType: 'danger',
             cancelText: 'Cancelar',
             onOk() {
-                db.collection("cars").doc(id).delete()
-                    .then(function() {
-                        console.log("Document successfully deleted!");
-                    })
-                    .catch(function(error) {
-                        console.error("Error removing document: ", error);
-                    });
-                setReload(Math.random())
+                return deleteCar(id);
             },
-            // onCancel() {
-            // },
         });
+    }
+
+    function deleteCar(id) {
+        return new Promise((resolve, reject) => {
+            db.collection("cars").doc(id).delete()
+                .then(function() {
+                    console.log("Document successfully deleted!");
+                    setReload(Math.random()) // Reload the table only after delete
+                    resolve(true)
+                })
+                .catch(function(error) {
+                    console.error("Error removing document: ", error);
+                    setReload(Math.random())
+                    reject(true)
+                });
+        }).catch(() => console.log('Oops errors!'));
+    }
+
+    function getCarData() {
+        setLoading(true)
+        db.collection('cars').get()
+        .then(response => {
+            let data = []
+            response.docs.forEach((car, index) => {
+                let carData = car.data()
+                let toTable = {
+                    key: `${response.docs[index].id}`,
+                    model: `${carData.brand}, ${carData.model}`,
+                    year: `${carData.year}`,
+                    price: `R$ ${carData.price}`
+                }
+                data.push(toTable);
+                setLoading(false)
+            });
+            console.log(data);
+            setCars(data)
+        })
+        .catch(error => console.log(error))
     }
     
     const columns = [
@@ -62,23 +92,7 @@ const Home = () => {
         }
     ]    
 
-    React.useEffect(() => {
-        db.collection('cars').get()
-            .then(response => {
-                let data = []
-                response.docs.forEach((car, index) => {
-                    let carData = car.data()
-                    let toTable = {
-                        key: `${response.docs[index].id}`,
-                        model: `${carData.brand}, ${carData.model}`,
-                        year: `${carData.year}`,
-                        price: `R$ ${carData.price}`
-                    }
-                    data.push(toTable);
-                });
-                setCars(data)
-            })
-    }, [reload])
+    React.useEffect(() => getCarData(), [reload])
 
     return (
         <>
@@ -95,7 +109,9 @@ const Home = () => {
             </Row>
             <Row gutter={[16, 24]}>
                 <Col span={24}>
-                    <Table columns={columns} dataSource={cars} />
+                    <Spin spinning={loading}>
+                        <Table columns={columns} dataSource={cars} />
+                    </Spin>
                 </Col>
             </Row>
         </>
