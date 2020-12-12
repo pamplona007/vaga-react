@@ -5,7 +5,6 @@ const Header = () => {
     return (
         <Row className="main-header">
             <Col span={4}>
-                Teste
             </Col>
             <Col span={20}>
                 

@@ -7,12 +7,12 @@ import Nav from './Nav'
 const Layout = ({ children }) => {
     return (
         <>
-            <Header />
             <Row>
                 <Col span={4} className="main-menu">
                     <Nav />
                 </Col>
-                <Col span={20} className="main-content">
+                <Col span={20} offset={4} className="main-content">
+                    <Header />
                     <Outlet />
                 </Col>
             </Row>
