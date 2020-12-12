@@ -7,12 +7,48 @@ body {
 }
 
 .main-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   min-height: 70px;
   padding: 0 20px;
 }
 
 .main-menu {
-  min-height: calc(100vh - 70px);
+  height: 100vh;
+  position: fixed;
+  width: 100%;
 }
+
+.main-menu ul {
+  padding-top: 50px;
+}
+
+.car-carrousel {
+  height: 450px;
+}
+
+.car-carrousel > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 450px;
+}
+
+.ant-list-item-meta {
+  margin: 10px 0;
+}
+
+.img-avatar {
+  height: 150px;
+  width: 250px;
+  background-size: cover;
+  background-position: center;
+}
+/*# sourceMappingURL=index.css.map */

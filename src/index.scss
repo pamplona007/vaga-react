@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+}
+
+.main-content {
+  padding: 20px;
+}
+
+.main-header {
+  display: flex;
+  align-items: center;
+  min-height: 70px;
+  padding: 0 20px;
+}
+
+.main-menu {
+  height: 100vh;
+  position: fixed;
+  width: 100%;
+  ul {
+    padding-top: 50px;
+  }
+}
+
+.car-carrousel {
+  height: 450px;
+  > div {
+    display: flex;
+    align-items: center;
+    height: 450px;
+  }
+}
+
+.ant-list-item-meta {
+  margin: 10px 0;
+}
+
+.img-avatar {
+  height: 150px;
+  width: 250px;
+  background-size: cover;
+  background-position: center;
+}
