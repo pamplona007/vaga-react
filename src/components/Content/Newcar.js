@@ -5,24 +5,24 @@ import { db } from '../../util/firebaseUtils'
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 
-const { confirm } = Modal;
-
-
 const Newcar = () => {
-
     const [ loading, setLoading ] = React.useState(false);
-    const [ imageUrl, setimageUrl ] = React.useState('');
     const [ files, setFiles ] = React.useState([]);
     const navigate = useNavigate();
-            
+    const { confirm } = Modal;
     const uploadButton = (
         <div>
             <div className="ant-upload-text">Upload</div>
         </div>
     );
+            
 
     
     const onFinish = values => {
+        if (files.length === 0) {
+            message.error('Adicione pelo menos uma imagem!');
+            return
+        }
         setLoading(true)
         values.images = [];
         values.created = firebase.firestore.FieldValue.serverTimestamp();
@@ -40,7 +40,7 @@ const Newcar = () => {
         db.collection('cars').add(values)
             .then(response => {
                 setLoading(false);
-                navigate('/app');
+                navigate('/app/admin');
             })
             .catch((error) => {
                 setLoading(false);
@@ -76,7 +76,7 @@ const Newcar = () => {
                             onRemove= {file => {
                                 return new Promise((resolve, reject) => {
                                     confirm({
-                                        title: 'are you sure to remove this file?',
+                                        title: 'Tem certeza que deseja deletar este arquivo?',
                                         onOk: () => {
                                             let array = files;
                                             if (array.indexOf(file.originFileObj) > -1) {
@@ -87,45 +87,55 @@ const Newcar = () => {
                                         },
                                     })
                                 })
-                            }}                       
+                            }}
                             // onChange={handleChange}
                             // customRequest={customUpload}
                             >
-                            {imageUrl ? <img src={imageUrl} alt="car" /> : uploadButton}
+                            {uploadButton}
                         </Upload>
                         <Divider />
-                        <Form name="newCarForm" onFinish={onFinish} onFinishFailed={onFinishFailed}>
-                            <Form.Item label="Marca" name="brand" rules={[{ required: true }]}>
-                                <Input placeholder="Qual a marca do carro?" />
-                            </Form.Item>
-                            <Form.Item label="Modelo" name="model" rules={[{ required: true }]}>
-                                <Input placeholder="E qual o modelo?" />
-                            </Form.Item>
-                            <Form.Item label="Ano" name="year" rules={[{ required: true }]}>
-                                <Input placeholder="Em que ano ele foi lançado?" />
-                            </Form.Item>
-                            <Divider />
-                            <Form.Item label="Cor" name="color" rules={[{ required: true }]}>
-                                <Input placeholder="Qual a cor do carro?" />
-                            </Form.Item>
-                            <Form.Item label="Placa" name="plate" rules={[{ required: true }]}>
-                                <Input placeholder="Qual a placa do carro?" />
-                            </Form.Item>
-                            <Form.Item label="Cidade" name="city" rules={[{ required: true }]}>
-                                <Input placeholder="Em que cidade ele foi emplacado?" />
-                            </Form.Item>
-                            <Divider />
-                            <Form.Item label="Quilometragem" name="distance" rules={[{ required: true }]}>
-                                <Input placeholder="Quantos quimômetros o carro possui?" />
-                            </Form.Item>
-                            <Form.Item label="Preço" name="price" rules={[{ required: true }]}>
-                                <Input placeholder="Qual o preço que deste carro?" />
-                            </Form.Item>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Enviar
-                                </Button>
-                            </Form.Item>
+                        <Form 
+                            name="newCarForm" 
+                            onFinish={onFinish} 
+                            onFinishFailed={onFinishFailed} 
+                            layout="vertical" 
+                            requiredMark='optional'
+                        >
+                            <Row gutter={16}>
+                                <Col xs={24} sm={24} md={12} lg={12}>
+                                    <Form.Item label="Marca" name="brand" rules={[{ required: true }]}>
+                                        <Input placeholder="Qual a marca do carro?" />
+                                    </Form.Item>
+                                    <Form.Item label="Ano" name="year" rules={[{ required: true }]}>
+                                        <Input placeholder="Em que ano ele foi lançado?" />
+                                    </Form.Item>
+                                    <Form.Item label="Placa" name="plate" rules={[{ required: true }]}>
+                                        <Input placeholder="Qual a placa do carro?" />
+                                    </Form.Item>
+                                    <Form.Item label="Quilometragem" name="distance" rules={[{ required: true }]}>
+                                        <Input placeholder="Quantos quimômetros o carro possui?" />
+                                    </Form.Item>
+                                    <Form.Item>
+                                        <Button type="primary" htmlType="submit">
+                                            Enviar
+                                        </Button>
+                                    </Form.Item>
+                                </Col>
+                                <Col xs={24} sm={24} md={12} lg={12}>
+                                    <Form.Item label="Modelo" name="model" rules={[{ required: true }]}>
+                                        <Input placeholder="E qual o modelo?" />
+                                    </Form.Item>
+                                    <Form.Item label="Cor" name="color" rules={[{ required: true }]}>
+                                        <Input placeholder="Qual a cor do carro?" />
+                                    </Form.Item>
+                                    <Form.Item label="Cidade" name="city" rules={[{ required: true }]}>
+                                        <Input placeholder="Em que cidade ele foi emplacado?" />
+                                    </Form.Item>
+                                    <Form.Item label="Preço" name="price" rules={[{ required: true }]}>
+                                        <Input placeholder="Qual o preço que deste carro?" />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
                         </Form>
                     </Spin>
                 </Col>

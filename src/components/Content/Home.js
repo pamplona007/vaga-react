@@ -3,13 +3,11 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { db } from '../../util/firebaseUtils'
 
-const { confirm } = Modal;
-
 const Home = () => {
-
     const [cars, setCars] = React.useState(null)
     const [reload, setReload] = React.useState('')
     const [loading, setLoading] = React.useState(false)
+    const { confirm } = Modal;
 
     function showDeleteConfirm(id, model) {
         confirm({

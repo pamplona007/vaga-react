@@ -1,68 +1,124 @@
 import React from 'react';
 import firebase from 'firebase';
-import { Modal, Button, Row, Col, Divider, Input, Form, Upload, Spin } from 'antd'
-import { useParams } from 'react-router-dom';
+import { Modal, Button, Row, Col, Divider, Input, Form, Upload, Spin, message, Card } from 'antd'
+import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../../util/firebaseUtils';
 import { v4 as uuidv4 } from 'uuid';
+import { DeleteOutlined } from '@ant-design/icons'
 
-
-const layout = {
-    labelCol: {
-        span: 4,
-    },
-    wrapperCol: {
-        span: 20,
-    },
-};
-  const tailLayout = {
-    wrapperCol: {
-        offset: 8,
-        span: 16,
-    },
-};
-  
 const Editcar = () => {
     const params = useParams();
-    const [ car, setCar ] = React.useState(null)
-    const [ imageUrl, setimageUrl ] = React.useState('');
+    const [ car, setCar ] = React.useState(null);
     const [ files, setFiles ] = React.useState([]);
-    const [ loading, setLoading] = React.useState(false);
+    const [ uploadedFiles, setUploadedFiles ] = React.useState([]);
+    const [ loading, setLoading ] = React.useState(false);
+    const [ reload, setReload ] = React.useState('');
+    const [ form ] = Form.useForm();
+    const navigate = useNavigate();
+    const { confirm } = Modal;
+    const { Meta } = Card;
     const uploadButton = (
         <div>
             <div className="ant-upload-text">Upload</div>
         </div>
     );
-    const [form] = Form.useForm();
+    
+    function showDeleteConfirm(id) {
+        confirm({
+            title: 'Realmente deseja deletar este arquivo?',
+            okText: 'Deletar',
+            okType: 'danger',
+            cancelText: 'Cancelar',
+            onOk() {
+                return deleteImg(id);
+            },
+        });
+    }
+
+    function deleteImg(id) {
+        return new Promise((resolve, reject) => {
+            db.collection("cars").doc(params.id).update({
+                images: firebase.firestore.FieldValue.arrayRemove(id)
+            }).then(() => {
+                console.log("Document successfully deleted!");
+                setReload(Math.random())
+                resolve(true)
+            }).catch((error) => {
+                console.error("Error removing document: ", error);
+                reject(true)
+            });
+        }).catch(() => console.log('Oops errors!'));
+    }
+
+    async function getImgRef(img) {
+        const storageRef = firebase.storage().ref();
+        const imgRef = storageRef.child(`images/${img}.png`)
+        let link;
+        await imgRef.getDownloadURL()
+            .then(url => {
+                link = url;
+            })
+        return link;
+    }
+
+    async function getImages(imgArray) {
+        let uris = []
+        for (const img of imgArray) {
+            await getImgRef(img).then(result => {
+                uris.push({
+                    img: img,
+                    url:result
+                })
+            })
+        }
+        return uris
+    }
 
     const onFinish = values => {
-        values.images = [];
+        setLoading(true)
+        if (files.length === 0) {
+            message.error('Adicione pelo menos uma imagem!');
+            return
+        }
         files.forEach(file => {
             const storageRef = firebase.storage().ref();
             const imageName = `${values.brand}-${values.model}-${uuidv4()}`;
             const imgFile = storageRef.child(`images/${imageName}.png`);
             try {
                 const image = imgFile.put(file);
-                values.images.push(imageName);
+                db.collection('cars').doc(params.id).update({
+                    images: firebase.firestore.FieldValue.arrayUnion(imageName)
+                }).then((response) => {
+                    console.log(response);
+                    setLoading(false)
+                }).catch((error) => console.log(error))    
             } catch(e) {
             }
         });
         console.log('Salvando dados ' + values);
         db.collection('cars').doc(params.id).update(values)
-            .then((response) => console.log(response))
+            .then((response) => {
+                console.log(response);
+                navigate('/app/admin');
+                setLoading(false)
+            })
             .catch((error) => console.log(error))
     };
-
+    
     React.useEffect(() => {
         setLoading(true)
         db.collection('cars').doc(params.id).get()
-            .then(response => {
+            .then((response) => {
                 setCar(response.data())
+                getImages(response.data().images).then(result => {
+                    setUploadedFiles(result)
+                })
                 setLoading(false)
             })
             .catch(error => {
                 console.log('Erro ao recuperar informações '+error);
             })
-    }, [])
+    }, [reload])
 
     if (car) {
         form.setFieldsValue({
@@ -85,57 +141,112 @@ const Editcar = () => {
                 </Col>
             </Row>
             <Divider />
+            <Spin spinning={loading}>
+            <Row gutter={16}>
+                {uploadedFiles && (
+                    uploadedFiles.map((item, index) => (
+                        <Col xs={12} sm={12} md={8} lg={6} xl={6}>
+                            <Card
+                                bodyStyle={{
+                                    backgroundImage: `Url(${item.url})`,
+                                    backgroundPosition: 'center',
+                                    backgroundSize: 'cover',
+                                    height: '220px',
+                                }}
+                                actions={[
+                                    <DeleteOutlined key="delete" onClick={() => showDeleteConfirm(item.img)} />,
+                                ]}
+                            />
+                        </Col>
+                    ))
+                )}
+            </Row>
+            <Divider />
             <Row>
                 <Col span={24}>
-                    <Spin spinning={loading}>
-                        <Upload
-                            name="car"
-                            listType="picture-card"
-                            className="car-uploader"
-                            beforeUpload={file => {
-                                setFiles(() => [...files, file]);
-                                return false;            
-                            }}
-                            >
-                            {imageUrl ? <img src={imageUrl} alt="car" /> : uploadButton}
-                        </Upload>
-                        <Divider />
-                        <Form {...layout} form={form} name="control-hooks" onFinish={onFinish}>
-                            <Form.Item label="Marca" name="brand" rules={[{ required: true }]}>
-                                <Input placeholder="Qual a marca do carro?" />
-                            </Form.Item>
-                            <Form.Item label="Modelo" name="model" rules={[{ required: true }]}>
-                                <Input placeholder="E qual o modelo?" />
-                            </Form.Item>
-                            <Form.Item label="Ano" name="year" rules={[{ required: true }]}>
-                                <Input placeholder="Em que ano ele foi lançado?" />
-                            </Form.Item>
-                            <Divider />
-                            <Form.Item label="Cor" name="color" rules={[{ required: true }]}>
-                                <Input placeholder="Qual a cor do carro?" />
-                            </Form.Item>
-                            <Form.Item label="Placa" name="plate" rules={[{ required: true }]}>
-                                <Input placeholder="Qual a placa do carro?" />
-                            </Form.Item>
-                            <Form.Item label="Cidade" name="city" rules={[{ required: true }]}>
-                                <Input placeholder="Em que cidade ele foi emplacado?" />
-                            </Form.Item>
-                            <Divider />
-                            <Form.Item label="Quilometragem" name="distance" rules={[{ required: true }]}>
-                                <Input placeholder="Quantos quimômetros o carro possui?" />
-                            </Form.Item>
-                            <Form.Item label="Preço" name="price" rules={[{ required: true }]}>
-                                <Input placeholder="Qual o preço que deste carro?" />
-                            </Form.Item>
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit">
-                                    Enviar
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                    </Spin>
+                    <Upload
+                        name="car"
+                        listType="picture-card"
+                        className="car-uploader"
+                        beforeUpload={file => {
+                            setFiles(() => [...files, file]);
+                            return false;            
+                        }}
+                        onRemove= {file => {
+                            console.log(file);
+                            return new Promise((resolve, reject) => {
+                                confirm({
+                                    title: 'Tem certeza que deseja deletar este arquivo?',
+                                    onOk: () => {
+                                        let array = files;
+                                        switch (true) {
+                                            case (array.indexOf(file) > -1):
+                                                array.splice(array.indexOf(file), 1);
+                                                setFiles(array);
+                                                console.log(files);    
+                                                break;
+                                            case (array.indexOf(file.originFileObj) > -1):
+                                                array.splice(array.indexOf(file.originFileObj), 1);
+                                                setFiles(array);
+                                                console.log(files);    
+                                                break;
+                                        }
+                                        resolve(true);
+                                    },
+                                })
+                            })
+                        }}
+
+                        >
+                        {uploadButton}
+                    </Upload>
+                    <Divider />
+                    <Form 
+                        layout='vertical' 
+                        form={form} 
+                        name="control-hooks" 
+                        onFinish={onFinish}
+                        requiredMark='optional'
+                    >
+                        <Row gutter={16}>
+                            <Col xs={24} sm={24} md={12} lg={12}>
+                                <Form.Item label="Marca" name="brand" rules={[{ required: true }]}>
+                                    <Input placeholder="Qual a marca do carro?" />
+                                </Form.Item>
+                                <Form.Item label="Ano" name="year" rules={[{ required: true }]}>
+                                    <Input placeholder="Em que ano ele foi lançado?" />
+                                </Form.Item>
+                                <Form.Item label="Placa" name="plate" rules={[{ required: true }]}>
+                                    <Input placeholder="Qual a placa do carro?" />
+                                </Form.Item>
+                                <Form.Item label="Quilometragem" name="distance" rules={[{ required: true }]}>
+                                    <Input placeholder="Quantos quimômetros o carro possui?" />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">
+                                        Enviar
+                                    </Button>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} sm={24} md={12} lg={12}>
+                                <Form.Item label="Modelo" name="model" rules={[{ required: true }]}>
+                                    <Input placeholder="E qual o modelo?" />
+                                </Form.Item>
+                                <Form.Item label="Cor" name="color" rules={[{ required: true }]}>
+                                    <Input placeholder="Qual a cor do carro?" />
+                                </Form.Item>
+                                <Form.Item label="Cidade" name="city" rules={[{ required: true }]}>
+                                    <Input placeholder="Em que cidade ele foi emplacado?" />
+                                </Form.Item>
+                                <Form.Item label="Preço" name="price" rules={[{ required: true }]}>
+                                    <Input placeholder="Qual o preço que deste carro?" />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Form>
                 </Col>
             </Row>
+            </Spin>
         </>
     )
 }

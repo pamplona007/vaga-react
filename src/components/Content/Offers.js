@@ -5,18 +5,17 @@ import { Link } from 'react-router-dom'
 import { db } from '../../util/firebaseUtils'
 import { EyeOutlined } from '@ant-design/icons';
 
-
-const IconText = ({ icon, text }) => (
-    <Space>
-        {React.createElement(icon)}
-        {text}
-    </Space>
-);
-
 const Offers = () => {
     const [cars, setCars] = React.useState([])
+    const [car, setCar] = React.useState([])
     const [loading, setLoading] = React.useState(false)
     const [reload, setReload] = React.useState('')
+    const IconText = ({ icon, text }) => (
+        <Space>
+            {React.createElement(icon)}
+            {text}
+        </Space>
+    );
     
     async function getImgRef(img) {
         const storageRef = firebase.storage().ref();

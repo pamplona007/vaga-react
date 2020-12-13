@@ -7,8 +7,8 @@ const Nav = () => {
 
   return (
     <Menu mode="inline" style={{ height: '100%', }}>
-      <Menu.Item key="1"><NavLink to="">Administração</NavLink></Menu.Item>
-      <Menu.Item key="2"><NavLink to="ofertas">Ofertas</NavLink></Menu.Item>
+      <Menu.Item key="2"><NavLink to="">Ofertas</NavLink></Menu.Item>
+      <Menu.Item key="1"><NavLink to="admin">Administração</NavLink></Menu.Item>
     </Menu>
   );
 };

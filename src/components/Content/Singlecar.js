@@ -2,16 +2,14 @@ import React from 'react'
 import firebase from 'firebase';
 import { useParams } from 'react-router-dom';
 import { db } from '../../util/firebaseUtils';
-import { Carousel, Col, Descriptions, Image, Row, Typography } from 'antd';
-
-const { Title } = Typography;
-
+import { Carousel, Col, Descriptions, Image, Row, Spin, Typography } from 'antd';
 
 const Singlecar = () => {
     const params = useParams();
     const [ car, setCar ] = React.useState(null)
     const [ images, setImages ] = React.useState([]);
     const [ loading, setLoading] = React.useState(false);
+    const { Title } = Typography;
     const uploadButton = (
         <div>
             <div className="ant-upload-text">Upload</div>
@@ -48,6 +46,7 @@ const Singlecar = () => {
                 db.collection('cars').doc(params.id).update({
                     views: response.data().views + 1
                 })
+                setLoading(false)
             })
             .catch(error => {
                 console.log('Erro ao recuperar informações '+error);
@@ -65,7 +64,8 @@ const Singlecar = () => {
     };
 
     return (
-        <> 
+        <>
+        <Spin spinning={loading}>
             <Row gutter={[30, { xs: 8, sm: 16, md: 24, lg: 32 }]}>
                 <Col span={24}>
                     <Carousel autoplay>
@@ -90,6 +90,7 @@ const Singlecar = () => {
                     )}
                 </Col>
             </Row>
+        </Spin>
         </>
   )
 }
