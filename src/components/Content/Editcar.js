@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../../util/firebaseUtils';
 import { v4 as uuidv4 } from 'uuid';
 import { DeleteOutlined } from '@ant-design/icons'
+import ReactInputMask from 'react-input-mask';
 
 const Editcar = () => {
     const params = useParams();
@@ -218,10 +219,12 @@ const Editcar = () => {
                                     <Input placeholder="Em que ano ele foi lançado?" />
                                 </Form.Item>
                                 <Form.Item label="Placa" name="plate" rules={[{ required: true }]}>
-                                    <Input placeholder="Qual a placa do carro?" />
+                                    <ReactInputMask mask="aaa-*999" maskChar='' alwaysShowMask={false}>
+                                        {() => <Input placeholder="Qual a placa do carro?" />}
+                                    </ReactInputMask>
                                 </Form.Item>
                                 <Form.Item label="Quilometragem" name="distance" rules={[{ required: true }]}>
-                                    <Input placeholder="Quantos quimômetros o carro possui?" />
+                                    <Input type='number' placeholder="Quantos quimômetros o carro possui?" />
                                 </Form.Item>
                                 <Form.Item>
                                     <Button type="primary" htmlType="submit">
@@ -240,7 +243,7 @@ const Editcar = () => {
                                     <Input placeholder="Em que cidade ele foi emplacado?" />
                                 </Form.Item>
                                 <Form.Item label="Preço" name="price" rules={[{ required: true }]}>
-                                    <Input placeholder="Qual o preço que deste carro?" />
+                                    <Input type='number' placeholder="Qual o preço que deste carro?" />
                                 </Form.Item>
                             </Col>
                         </Row>

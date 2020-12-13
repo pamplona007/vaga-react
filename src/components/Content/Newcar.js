@@ -4,6 +4,7 @@ import { Modal, Form, Button, Divider, Input, Upload, message, Row, Col, Spin } 
 import { db } from '../../util/firebaseUtils'
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
+import ReactInputMask from 'react-input-mask';
 
 const Newcar = () => {
     const [ loading, setLoading ] = React.useState(false);
@@ -27,6 +28,7 @@ const Newcar = () => {
         values.images = [];
         values.created = firebase.firestore.FieldValue.serverTimestamp();
         values.views = 0;
+        values.plate = values.plate.toUpperCase()
         files.forEach(file => {
             const storageRef = firebase.storage().ref();
             const imageName = `${values.brand}-${values.model}-${uuidv4()}`;
@@ -110,10 +112,12 @@ const Newcar = () => {
                                         <Input placeholder="Em que ano ele foi lançado?" />
                                     </Form.Item>
                                     <Form.Item label="Placa" name="plate" rules={[{ required: true }]}>
-                                        <Input placeholder="Qual a placa do carro?" />
+                                        <ReactInputMask mask="aaa-*999" maskChar='' alwaysShowMask={false}>
+                                        {() => <Input placeholder="Qual a placa do carro?" />}
+                                        </ReactInputMask>
                                     </Form.Item>
                                     <Form.Item label="Quilometragem" name="distance" rules={[{ required: true }]}>
-                                        <Input placeholder="Quantos quimômetros o carro possui?" />
+                                        <Input type='number' placeholder="Quantos quimômetros o carro possui?" />
                                     </Form.Item>
                                     <Form.Item>
                                         <Button type="primary" htmlType="submit">
@@ -132,7 +136,7 @@ const Newcar = () => {
                                         <Input placeholder="Em que cidade ele foi emplacado?" />
                                     </Form.Item>
                                     <Form.Item label="Preço" name="price" rules={[{ required: true }]}>
-                                        <Input placeholder="Qual o preço que deste carro?" />
+                                        <Input type='number' placeholder="Qual o preço que deste carro?" />
                                     </Form.Item>
                                 </Col>
                             </Row>
