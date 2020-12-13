@@ -1,25 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-function App() {
+import Login from './components/Login';
+import Home from './components/Content/Home'
+import Editcar from './components/Content/Editcar'
+import Newcar from './components/Content/Newcar'
+import Offers from './components/Content/Offers';
+import Singlecar from './components/Content/Singlecar';
+import Layout from './components/Layout/Layout';
+
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="app/*" element={<Layout />}>
+          <Route path="/" element={<Offers />} />
+          <Route path="admin">
+            <Route path="/" element={<Home />}/>
+            <Route path="novo" element={<Newcar />} />
+            <Route path="editar/:id" element={<Editcar />} />
+          </Route>
+          <Route path=":id" element={<Singlecar />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>      
+  )
 }
 
-export default App;
+export default App
