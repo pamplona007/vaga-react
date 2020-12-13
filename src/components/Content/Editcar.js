@@ -75,11 +75,11 @@ const Editcar = () => {
     }
 
     const onFinish = values => {
-        setLoading(true)
         if (files.length === 0) {
             message.error('Adicione pelo menos uma imagem!');
             return
         }
+        setLoading(true)
         files.forEach(file => {
             const storageRef = firebase.storage().ref();
             const imageName = `${values.brand}-${values.model}-${uuidv4()}`;
@@ -90,7 +90,6 @@ const Editcar = () => {
                     images: firebase.firestore.FieldValue.arrayUnion(imageName)
                 }).then((response) => {
                     console.log(response);
-                    setLoading(false)
                 }).catch((error) => console.log(error))    
             } catch(e) {
             }
@@ -99,8 +98,8 @@ const Editcar = () => {
         db.collection('cars').doc(params.id).update(values)
             .then((response) => {
                 console.log(response);
-                navigate('/app/admin');
                 setLoading(false)
+                navigate('/app/admin');
             })
             .catch((error) => console.log(error))
     };

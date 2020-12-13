@@ -2,6 +2,11 @@ body {
   margin: 0;
 }
 
+.controls {
+  text-align: right;
+  padding: 0 25px;
+}
+
 .main-content {
   padding: 20px;
 }
@@ -50,5 +55,10 @@ body {
   width: 250px;
   background-size: cover;
   background-position: center;
+}
+
+.img-avatar.grid {
+  height: 250px;
+  width: 100%;
 }
 /*# sourceMappingURL=index.css.map */

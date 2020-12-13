@@ -2,14 +2,22 @@ import React from 'react'
 import firebase from 'firebase';
 import { useParams } from 'react-router-dom';
 import { db } from '../../util/firebaseUtils';
-import { Carousel, Col, Descriptions, Image, Row, Spin, Typography } from 'antd';
+import { Carousel, Col, Descriptions, Image, Row, Spin, Typography, Space } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
+
 
 const Singlecar = () => {
     const params = useParams();
     const [ car, setCar ] = React.useState(null)
     const [ images, setImages ] = React.useState([]);
-    const [ loading, setLoading] = React.useState(false);
+    const [ loading, setLoading ] = React.useState(false);
     const { Title } = Typography;
+    const IconText = ({ icon, text }) => (
+        <Space>
+            {React.createElement(icon)}
+            {text}
+        </Space>
+    );
     const uploadButton = (
         <div>
             <div className="ant-upload-text">Upload</div>
@@ -41,7 +49,7 @@ const Singlecar = () => {
         setLoading(true)
         db.collection('cars').doc(params.id).get()
             .then(response => {
-                setCar(response.data())
+                setCar({...response.data(), views: response.data().views + 1})
                 getImages(response.data().images)
                 db.collection('cars').doc(params.id).update({
                     views: response.data().views + 1
@@ -53,15 +61,8 @@ const Singlecar = () => {
             })
     }, [])
 
-    const contentStyle = {
-        height: '450px',
-        color: '#fff',
-        lineHeight: '160px',
-        textAlign: 'center',
-        background: '#364d79',
-        backgroundPosition: 'center',
-        backgroundSize: 'cover'
-    };
+    const creationDate = car ? new Date(car.created.toMillis()).toLocaleDateString() : ''
+
 
     return (
         <>
@@ -79,12 +80,21 @@ const Singlecar = () => {
                 <Col>
                     {car && (
                         <>
-                            <Title>{car && car.brand}, {car && car.model}</Title>
-                            <Descriptions title={`R$ ${car.price}`}>
+                            <Title>{car.brand}, {car.model}</Title>
+                            <Descriptions 
+                                title={`R$ ${car.price}`}
+                                extra={
+                                    <div className="controls">
+                                        <IconText icon={EyeOutlined} text={car.views} key="views-number" />
+                                        <p>Criado em: {creationDate}</p>
+                                    </div>
+                            }
+                            >
                                 <Descriptions.Item label="Ano">{car.year}</Descriptions.Item>
                                 <Descriptions.Item label="Cor">{car.color}</Descriptions.Item>
                                 <Descriptions.Item label="Cidade">{car.city}</Descriptions.Item>
                                 <Descriptions.Item label="Quilometragem">{car.distance}</Descriptions.Item>
+                                <Descriptions.Item label="Placa">{car.plate}</Descriptions.Item>
                             </Descriptions>
                         </>    
                     )}
