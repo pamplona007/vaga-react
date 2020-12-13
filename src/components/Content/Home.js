@@ -2,6 +2,8 @@ import { Table, Modal, Button, Row, Col, Divider, Space, Spin } from 'antd'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { db } from '../../util/firebaseUtils'
+import { ReloadOutlined } from '@ant-design/icons';
+
 
 const Home = () => {
     const [cars, setCars] = React.useState(null)
@@ -27,7 +29,7 @@ const Home = () => {
             db.collection("cars").doc(id).delete()
                 .then(function() {
                     console.log("Document successfully deleted!");
-                    setReload(Math.random()) // Reload the table only after delete
+                    setReload(Math.random()) // Reload the table after delete
                     resolve(true)
                 })
                 .catch(function(error) {
@@ -45,10 +47,11 @@ const Home = () => {
             let data = []
             response.docs.forEach((car, index) => {
                 let carData = car.data()
+                let creationDate = new Date(carData.created.toMillis()).toLocaleDateString()
                 let toTable = {
                     key: `${response.docs[index].id}`,
                     model: `${carData.brand}, ${carData.model}`,
-                    year: `${carData.year}`,
+                    register: `${creationDate}`,
                     price: `R$ ${carData.price}`
                 }
                 data.push(toTable);
@@ -65,11 +68,14 @@ const Home = () => {
             title: 'Marca, modelo',
             dataIndex: 'model',
             key: 'model',
+            render: (text, record) => (
+                <Link to={`/app/${record.key}`}>{text}</Link>
+            )
         },
         {
-            title: 'Ano',
-            dataIndex: 'year',
-            key: 'year',
+            title: 'Criado em',
+            dataIndex: 'register',
+            key: 'register',
         },
         {
             title: 'Preço',
@@ -101,8 +107,11 @@ const Home = () => {
             </Row>
             <Divider />
             <Row gutter={[16, 24]}>
-                <Col>
+                <Col sm={24} md={12}>
                     <Link to="novo"><Button type="primary">Adicionar Carro</Button></Link>
+                </Col>
+                <Col sm={24} md={12} className={'controls'}>
+                    <Button type="secondary" shape="circle" icon={<ReloadOutlined />} onClick={() => setReload(Math.random())} />
                 </Col>
             </Row>
             <Row gutter={[16, 24]}>

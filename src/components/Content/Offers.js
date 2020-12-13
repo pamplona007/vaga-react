@@ -1,15 +1,16 @@
 import React from 'react'
 import firebase from 'firebase'
-import { Modal, Button, Row, Col, Divider, Space, Spin, List, Avatar } from 'antd'
+import { Button, Row, Col, Divider, Space, Spin, List, Card, Radio } from 'antd'
 import { Link } from 'react-router-dom'
 import { db } from '../../util/firebaseUtils'
-import { EyeOutlined } from '@ant-design/icons';
+import { EyeOutlined, ReloadOutlined, UnorderedListOutlined, TableOutlined } from '@ant-design/icons';
 
 const Offers = () => {
-    const [cars, setCars] = React.useState([])
-    const [car, setCar] = React.useState([])
-    const [loading, setLoading] = React.useState(false)
-    const [reload, setReload] = React.useState('')
+    const [ cars, setCars ] = React.useState([])
+    const [ loading, setLoading ] = React.useState(false)
+    const [ reload, setReload ] = React.useState('')
+    const [ layout, setLayout ] = React.useState(0)
+    const { Meta } = Card;
     const IconText = ({ icon, text }) => (
         <Space>
             {React.createElement(icon)}
@@ -40,7 +41,6 @@ const Offers = () => {
 
         let i = 0
         for (const car of rawCars.docs) {
-            let img;
             let carData = car.data()
             await getImgRef(carData.images[0]).then(result => {
                 let toTable = {
@@ -60,9 +60,35 @@ const Offers = () => {
         setLoading(false)
     }
 
-    React.useEffect(() => getCarData(), [reload])
+    function changeLayout(e) {
+        switch (e.target.value) {
+            case 'list':
+                setLayout(0)
+                localStorage.setItem('layout', 0)
+                break;
+            case 'grid':
+                setLayout(1)               
+                localStorage.setItem('layout', 1)
+                break;
+            default :
+                console.log('Não temos esse layout ;v');
+                break;
+        }
+    }
 
+    React.useEffect(() => {
+        getCarData()
+        if (localStorage.getItem('layout')) {
+            setLayout(Number(localStorage.getItem('layout')))
+        }
+    }, [reload])
 
+    const grid = layout ? {
+        grid: {
+            gutter: 0,
+            column: 4,
+        }
+    } : ''
 
     return (
         <>
@@ -72,30 +98,48 @@ const Offers = () => {
                 </Col>
             </Row>
             <Divider />
-            <Row>
-                <Col span={24}>
+            <Row gutter={[0,16]}>
+                <Col span={24} className={'controls'}>
+                    <Space>
+                        <Radio.Group onChange={changeLayout} value={layout ? 'grid' : 'list'}>
+                            <Radio.Button value='grid'><TableOutlined /></Radio.Button>
+                            <Radio.Button value='list'><UnorderedListOutlined /></Radio.Button>
+                        </Radio.Group>
+
+                        <Button type="secondary" shape="circle" icon={<ReloadOutlined />} onClick={() => setReload(Math.random())} />
+                    </Space>
                 </Col>
-            </Row>
-            <Row>
                 <Col span={24}>
                     <Spin spinning={loading}>
                         <List 
                             itemLayout="vertical"
                             size="large"
+                            {...grid}
                             dataSource={cars}
                             pagination={{
                                 pageSize: 10,
                             }}
                             renderItem={item => (
                                 <List.Item 
-                                    key={item.key} 
-                                    extra={<div className="img-avatar" style={{ backgroundImage: "url(" + item.avatar + ")" }}></div>}
-                                    actions={[<IconText icon={EyeOutlined} text={item.views} key="views-number" />]}
+                                    key={item.key}
+                                    extra={layout ? '' : <Link to={`${item.key}`}><div className={layout ? 'img-avatar grid' : 'img-avatar'} style={{ backgroundImage: "url(" + item.avatar + ")" }}></div></Link>}
+                                    actions={layout ? [] : [<IconText icon={EyeOutlined} text={item.views} key="views-number" />]}
                                 >
-                                    <List.Item.Meta
-                                        title={<Link to={`${item.key}`}>{`${item.model}`}</Link>}
-                                        description={item.price}
-                                    />
+                                    {layout ? (
+                                        <Link to={`${item.key}`}>
+                                            <Card 
+                                                size='small'
+                                                hoverable
+                                                cover={<img alt="example" src={item.avatar} />}
+                                                actions={[<IconText icon={EyeOutlined} text={item.views} key="views-number" />]}
+                                            >
+                                                <Meta title={item.model} description={item.price} />
+                                                <p></p>
+                                            </Card>
+                                        </Link>
+                                    ) : (
+                                        <List.Item.Meta title={<Link to={`${item.key}`}>{`${item.model}`}</Link>} description={item.price}/>
+                                    )}
                                 </List.Item>
                             )}
                         />

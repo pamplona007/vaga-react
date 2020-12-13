@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../../util/firebaseUtils';
 import { v4 as uuidv4 } from 'uuid';
 import { DeleteOutlined } from '@ant-design/icons'
+import ReactInputMask from 'react-input-mask';
 
 const Editcar = () => {
     const params = useParams();
@@ -16,7 +17,6 @@ const Editcar = () => {
     const [ form ] = Form.useForm();
     const navigate = useNavigate();
     const { confirm } = Modal;
-    const { Meta } = Card;
     const uploadButton = (
         <div>
             <div className="ant-upload-text">Upload</div>
@@ -75,11 +75,11 @@ const Editcar = () => {
     }
 
     const onFinish = values => {
-        setLoading(true)
         if (files.length === 0) {
             message.error('Adicione pelo menos uma imagem!');
             return
         }
+        setLoading(true)
         files.forEach(file => {
             const storageRef = firebase.storage().ref();
             const imageName = `${values.brand}-${values.model}-${uuidv4()}`;
@@ -90,7 +90,6 @@ const Editcar = () => {
                     images: firebase.firestore.FieldValue.arrayUnion(imageName)
                 }).then((response) => {
                     console.log(response);
-                    setLoading(false)
                 }).catch((error) => console.log(error))    
             } catch(e) {
             }
@@ -99,8 +98,8 @@ const Editcar = () => {
         db.collection('cars').doc(params.id).update(values)
             .then((response) => {
                 console.log(response);
-                navigate('/app/admin');
                 setLoading(false)
+                navigate('/app/admin');
             })
             .catch((error) => console.log(error))
     };
@@ -118,7 +117,7 @@ const Editcar = () => {
             .catch(error => {
                 console.log('Erro ao recuperar informações '+error);
             })
-    }, [reload])
+    }, [reload, params.id])
 
     if (car) {
         form.setFieldsValue({
@@ -190,6 +189,9 @@ const Editcar = () => {
                                                 setFiles(array);
                                                 console.log(files);    
                                                 break;
+                                            default :
+                                                resolve(false);
+                                                return;
                                         }
                                         resolve(true);
                                     },
@@ -217,10 +219,12 @@ const Editcar = () => {
                                     <Input placeholder="Em que ano ele foi lançado?" />
                                 </Form.Item>
                                 <Form.Item label="Placa" name="plate" rules={[{ required: true }]}>
-                                    <Input placeholder="Qual a placa do carro?" />
+                                    <ReactInputMask mask="aaa-*999" maskChar='' alwaysShowMask={false}>
+                                        {() => <Input placeholder="Qual a placa do carro?" />}
+                                    </ReactInputMask>
                                 </Form.Item>
                                 <Form.Item label="Quilometragem" name="distance" rules={[{ required: true }]}>
-                                    <Input placeholder="Quantos quimômetros o carro possui?" />
+                                    <Input type='number' placeholder="Quantos quimômetros o carro possui?" />
                                 </Form.Item>
                                 <Form.Item>
                                     <Button type="primary" htmlType="submit">
@@ -239,7 +243,7 @@ const Editcar = () => {
                                     <Input placeholder="Em que cidade ele foi emplacado?" />
                                 </Form.Item>
                                 <Form.Item label="Preço" name="price" rules={[{ required: true }]}>
-                                    <Input placeholder="Qual o preço que deste carro?" />
+                                    <Input type='number' placeholder="Qual o preço que deste carro?" />
                                 </Form.Item>
                             </Col>
                         </Row>
