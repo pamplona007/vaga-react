@@ -1,6 +1,6 @@
 import React from 'react'
 import firebase from 'firebase'
-import { Modal, Button, Row, Col, Divider, Space, Spin, List, Avatar, Card, Radio } from 'antd'
+import { Button, Row, Col, Divider, Space, Spin, List, Card, Radio } from 'antd'
 import { Link } from 'react-router-dom'
 import { db } from '../../util/firebaseUtils'
 import { EyeOutlined, ReloadOutlined, UnorderedListOutlined, TableOutlined } from '@ant-design/icons';
@@ -41,7 +41,6 @@ const Offers = () => {
 
         let i = 0
         for (const car of rawCars.docs) {
-            let img;
             let carData = car.data()
             await getImgRef(carData.images[0]).then(result => {
                 let toTable = {
@@ -70,6 +69,9 @@ const Offers = () => {
             case 'grid':
                 setLayout(1)               
                 localStorage.setItem('layout', 1)
+                break;
+            default :
+                console.log('Não temos esse layout ;v');
                 break;
         }
     }
@@ -127,6 +129,7 @@ const Offers = () => {
                                         <Link to={`${item.key}`}>
                                             <Card 
                                                 size='small'
+                                                hoverable
                                                 cover={<img alt="example" src={item.avatar} />}
                                                 actions={[<IconText icon={EyeOutlined} text={item.views} key="views-number" />]}
                                             >

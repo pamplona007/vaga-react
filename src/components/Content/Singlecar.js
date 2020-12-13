@@ -18,11 +18,6 @@ const Singlecar = () => {
             {text}
         </Space>
     );
-    const uploadButton = (
-        <div>
-            <div className="ant-upload-text">Upload</div>
-        </div>
-    );
 
     async function getImgRef(img) {
         const storageRef = firebase.storage().ref();

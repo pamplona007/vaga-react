@@ -16,7 +16,6 @@ const Editcar = () => {
     const [ form ] = Form.useForm();
     const navigate = useNavigate();
     const { confirm } = Modal;
-    const { Meta } = Card;
     const uploadButton = (
         <div>
             <div className="ant-upload-text">Upload</div>
@@ -117,7 +116,7 @@ const Editcar = () => {
             .catch(error => {
                 console.log('Erro ao recuperar informações '+error);
             })
-    }, [reload])
+    }, [reload, params.id])
 
     if (car) {
         form.setFieldsValue({
@@ -189,6 +188,9 @@ const Editcar = () => {
                                                 setFiles(array);
                                                 console.log(files);    
                                                 break;
+                                            default :
+                                                resolve(false);
+                                                return;
                                         }
                                         resolve(true);
                                     },

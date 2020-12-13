@@ -29,7 +29,7 @@ const Home = () => {
             db.collection("cars").doc(id).delete()
                 .then(function() {
                     console.log("Document successfully deleted!");
-                    setReload(Math.random()) // Reload the table only after delete
+                    setReload(Math.random()) // Reload the table after delete
                     resolve(true)
                 })
                 .catch(function(error) {
