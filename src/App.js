@@ -8,6 +8,7 @@ import Newcar from './components/Content/Newcar'
 import Offers from './components/Content/Offers';
 import Singlecar from './components/Content/Singlecar';
 import Layout from './components/Layout/Layout';
+import NotFound from './components/Content/NotFound';
 
 
 const App = () => {
@@ -24,6 +25,7 @@ const App = () => {
           </Route>
           <Route path=":id" element={<Singlecar />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>      
   )

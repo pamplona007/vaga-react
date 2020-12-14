@@ -2,6 +2,11 @@ body {
   margin: 0;
 }
 
+img {
+  width: 100%;
+  height: auto;
+}
+
 .controls {
   text-align: right;
   padding: 0 25px;
@@ -22,13 +27,41 @@ body {
     box-shadow: 0px 5px 30px -15px rgba($color: #000000, $alpha: .4);
     display: flex;
     align-items: center;
-    .login-img-wrapper {
-      padding: 50px;
-      width: 50%;
+    @media (max-width: 768px) {
+      height: 80vh;
+      flex-flow: column;
     }
-    .login-form-wrapper {
+    .login-img-wrapper, .login-form-wrapper {
       padding: 50px;
       width: 50%;
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.nf-page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-flow: column;
+  .nf-wrapper{
+    .nf-img-wrapper {
+      padding: 50px;
+      img {
+        height: 70vh;
+        @media (orientation: portrait) {
+          height: auto;
+          width: 80vw;
+        }
+      }
+    }
+    .nf-form-wrapper {
+      padding: 20px;
+      width: 100%;
+      text-align: center;
     }
   }
 }
@@ -72,7 +105,12 @@ body {
   background-size: cover;
   background-position: center;
   &.grid {
-    height: 250px;
+    height: calc(100vw / 10);
     width: 100%;
+    @media (max-width: 768px) {
+      height: calc(100vw / 4);
+      flex-flow: column;
+    }
   }
 }
+
