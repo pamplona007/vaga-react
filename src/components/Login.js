@@ -9,7 +9,7 @@ const Login = () => {
         <div className='login-page'>
             <div className='login-card'>
                 <div className='login-img-wrapper'>
-                    <Image src={loginImg} />
+                    <img src={loginImg} />
                 </div>
                 <div className='login-form-wrapper'>
                     <Form layout="vertical">

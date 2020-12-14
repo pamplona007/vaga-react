@@ -76,15 +76,17 @@ const Home = () => {
             title: 'Criado em',
             dataIndex: 'register',
             key: 'register',
+            responsive: ['md']
         },
         {
             title: 'Preço',
             dataIndex: 'price',
             key: 'price',
+            responsive: ['md']
         },
         {
             title: "Ações",
-            key:"actions",
+            key: "actions",
             render: (text, record) => (
                 <>
                     <Space>

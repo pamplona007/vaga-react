@@ -85,8 +85,14 @@ const Offers = () => {
 
     const grid = layout ? {
         grid: {
-            gutter: 0,
+            gutter: 16,
             column: 4,
+            xs: 1,
+            sm: 2,
+            md: 3,
+            lg: 3,
+            xl: 4,
+            xxl: 4,
         }
     } : ''
 
@@ -122,7 +128,7 @@ const Offers = () => {
                             renderItem={item => (
                                 <List.Item 
                                     key={item.key}
-                                    extra={layout ? '' : <Link to={`${item.key}`}><div className={layout ? 'img-avatar grid' : 'img-avatar'} style={{ backgroundImage: "url(" + item.avatar + ")" }}></div></Link>}
+                                    extra={layout ? '' : <Link to={`${item.key}`}><div className='img-avatar' style={{ backgroundImage: "url(" + item.avatar + ")" }}></div></Link>}
                                     actions={layout ? [] : [<IconText icon={EyeOutlined} text={item.views} key="views-number" />]}
                                 >
                                     {layout ? (
@@ -130,7 +136,7 @@ const Offers = () => {
                                             <Card 
                                                 size='small'
                                                 hoverable
-                                                cover={<img alt="example" src={item.avatar} />}
+                                                cover={<div className='img-avatar grid' style={{ backgroundImage: "url(" + item.avatar + ")" }}></div>}
                                                 actions={[<IconText icon={EyeOutlined} text={item.views} key="views-number" />]}
                                             >
                                                 <Meta title={item.model} description={item.price} />

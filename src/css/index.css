@@ -2,6 +2,11 @@ body {
   margin: 0;
 }
 
+img {
+  width: 100%;
+  height: auto;
+}
+
 .controls {
   text-align: right;
   padding: 0 25px;
@@ -37,14 +42,61 @@ body {
           align-items: center;
 }
 
-.login-page .login-card .login-img-wrapper {
+@media (max-width: 768px) {
+  .login-page .login-card {
+    height: 80vh;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: column;
+            flex-flow: column;
+  }
+}
+
+.login-page .login-card .login-img-wrapper, .login-page .login-card .login-form-wrapper {
   padding: 50px;
   width: 50%;
 }
 
-.login-page .login-card .login-form-wrapper {
+@media (max-width: 768px) {
+  .login-page .login-card .login-img-wrapper, .login-page .login-card .login-form-wrapper {
+    width: 100%;
+  }
+}
+
+.nf-page {
+  width: 100vw;
+  height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: column;
+          flex-flow: column;
+}
+
+.nf-page .nf-wrapper .nf-img-wrapper {
   padding: 50px;
-  width: 50%;
+}
+
+.nf-page .nf-wrapper .nf-img-wrapper img {
+  height: 70vh;
+}
+
+@media (orientation: portrait) {
+  .nf-page .nf-wrapper .nf-img-wrapper img {
+    height: auto;
+    width: 80vw;
+  }
+}
+
+.nf-page .nf-wrapper .nf-form-wrapper {
+  padding: 20px;
+  width: 100%;
+  text-align: center;
 }
 
 .main-content {
@@ -98,7 +150,17 @@ body {
 }
 
 .img-avatar.grid {
-  height: 250px;
+  height: calc(100vw / 10);
   width: 100%;
+}
+
+@media (max-width: 768px) {
+  .img-avatar.grid {
+    height: calc(100vw / 4);
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-flow: column;
+            flex-flow: column;
+  }
 }
 /*# sourceMappingURL=index.css.map */

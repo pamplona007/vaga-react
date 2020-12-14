@@ -75,10 +75,6 @@ const Editcar = () => {
     }
 
     const onFinish = values => {
-        if (files.length === 0) {
-            message.error('Adicione pelo menos uma imagem!');
-            return
-        }
         setLoading(true)
         files.forEach(file => {
             const storageRef = firebase.storage().ref();
@@ -141,10 +137,10 @@ const Editcar = () => {
             </Row>
             <Divider />
             <Spin spinning={loading}>
-            <Row gutter={16}>
+            <Row gutter={[16, 16]}>
                 {uploadedFiles && (
                     uploadedFiles.map((item, index) => (
-                        <Col xs={12} sm={12} md={8} lg={6} xl={6}>
+                        <Col xs={24} sm={12} md={8} lg={6} xl={6}>
                             <Card
                                 bodyStyle={{
                                     backgroundImage: `Url(${item.url})`,
@@ -215,35 +211,49 @@ const Editcar = () => {
                                 <Form.Item label="Marca" name="brand" rules={[{ required: true }]}>
                                     <Input placeholder="Qual a marca do carro?" />
                                 </Form.Item>
-                                <Form.Item label="Ano" name="year" rules={[{ required: true }]}>
-                                    <Input placeholder="Em que ano ele foi lançado?" />
-                                </Form.Item>
-                                <Form.Item label="Placa" name="plate" rules={[{ required: true }]}>
-                                    <ReactInputMask mask="aaa-*999" maskChar='' alwaysShowMask={false}>
-                                        {() => <Input placeholder="Qual a placa do carro?" />}
-                                    </ReactInputMask>
-                                </Form.Item>
-                                <Form.Item label="Quilometragem" name="distance" rules={[{ required: true }]}>
-                                    <Input type='number' placeholder="Quantos quimômetros o carro possui?" />
-                                </Form.Item>
-                                <Form.Item>
-                                    <Button type="primary" htmlType="submit">
-                                        Enviar
-                                    </Button>
-                                </Form.Item>
                             </Col>
                             <Col xs={24} sm={24} md={12} lg={12}>
                                 <Form.Item label="Modelo" name="model" rules={[{ required: true }]}>
                                     <Input placeholder="E qual o modelo?" />
                                 </Form.Item>
+                            </Col>
+                            <Col xs={24} sm={24} md={12} lg={12}>
+                                <Form.Item label="Ano" name="year" rules={[{ required: true }]}>
+                                    <Input placeholder="Em que ano ele foi lançado?" />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} sm={24} md={12} lg={12}>
                                 <Form.Item label="Cor" name="color" rules={[{ required: true }]}>
                                     <Input placeholder="Qual a cor do carro?" />
                                 </Form.Item>
+                            </Col>
+                            <Col xs={24} sm={24} md={12} lg={12}>
+                                <Form.Item label="Placa" name="plate" rules={[{ required: true }]}>
+                                    <ReactInputMask mask="aaa-*999" maskChar='' alwaysShowMask={false}>
+                                    {() => <Input placeholder="Qual a placa do carro?" />}
+                                    </ReactInputMask>
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} sm={24} md={12} lg={12}>
                                 <Form.Item label="Cidade" name="city" rules={[{ required: true }]}>
                                     <Input placeholder="Em que cidade ele foi emplacado?" />
                                 </Form.Item>
+                            </Col>
+                            <Col xs={24} sm={24} md={12} lg={12}>
+                                <Form.Item label="Quilometragem" name="distance" rules={[{ required: true }]}>
+                                    <Input type='number' placeholder="Quantos quimômetros o carro possui?" />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} sm={24} md={12} lg={12}>
                                 <Form.Item label="Preço" name="price" rules={[{ required: true }]}>
                                     <Input type='number' placeholder="Qual o preço que deste carro?" />
+                                </Form.Item>
+                            </Col>
+                            <Col xs={24} sm={24} md={12} lg={12}>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit">
+                                        Enviar
+                                    </Button>
                                 </Form.Item>
                             </Col>
                         </Row>
